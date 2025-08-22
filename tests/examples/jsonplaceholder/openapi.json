@@ -1,0 +1,167 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "JSONPlaceholder (sea-qa demo subset)", "version": "1.0.0" },
+  "servers": [{ "url": "https://jsonplaceholder.typicode.com" }],
+  "paths": {
+    "/posts": {
+      "get": {
+        "summary": "List posts",
+        "parameters": [
+          { "in": "query", "name": "userId", "required": false, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Post" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create post (fake)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/NewPost" } }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Post" } }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{id}": {
+      "get": {
+        "summary": "Get post by id",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/Post" } }
+            }
+          }
+        }
+      }
+    },
+    "/comments": {
+      "get": {
+        "summary": "List comments",
+        "parameters": [
+          { "in": "query", "name": "postId", "required": false, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Comment" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Get user",
+        "parameters": [
+          { "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/User" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Post": {
+        "type": "object",
+        "required": ["userId", "id", "title", "body"],
+        "properties": {
+          "userId": { "type": "integer" },
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "body": { "type": "string" }
+        }
+      },
+      "NewPost": {
+        "type": "object",
+        "required": ["userId", "title", "body"],
+        "properties": {
+          "userId": { "type": "integer" },
+          "title": { "type": "string" },
+          "body": { "type": "string" }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "required": ["postId", "id", "name", "email", "body"],
+        "properties": {
+          "postId": { "type": "integer" },
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "body": { "type": "string" }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "required": ["street", "suite", "city", "zipcode", "geo"],
+        "properties": {
+          "street": { "type": "string" },
+          "suite": { "type": "string" },
+          "city": { "type": "string" },
+          "zipcode": { "type": "string" },
+          "geo": {
+            "type": "object",
+            "required": ["lat", "lng"],
+            "properties": {
+              "lat": { "type": "string" },
+              "lng": { "type": "string" }
+            }
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "required": ["name", "catchPhrase", "bs"],
+        "properties": {
+          "name": { "type": "string" },
+          "catchPhrase": { "type": "string" },
+          "bs": { "type": "string" }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": ["id", "name", "username", "email", "address", "phone", "website", "company"],
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "username": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "address": { "$ref": "#/components/schemas/Address" },
+          "phone": { "type": "string" },
+          "website": { "type": "string" },
+          "company": { "$ref": "#/components/schemas/Company" }
+        }
+      }
+    }
+  }
+}

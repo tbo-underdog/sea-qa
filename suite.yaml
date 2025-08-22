@@ -1,0 +1,24 @@
+name: Demo API Suite
+openapi: ./openapi-dev.yaml
+
+scenarios:
+  - name: Create user (passes)
+    steps:
+      - hooks:
+        - type: process
+          when: before
+          cmd: go
+          args: ["run", "./scripts/gettoken.go"]
+          timeoutMs: 2000
+        request:
+          method: POST
+          url: ${BASE_URL|http://localhost:8081}/users
+          headers:
+            Content-Type: application/json
+          body:
+            email: qa+${uuid}@example.com
+            name: Test
+          timeoutMs: 2000
+        expect:
+          - { type: status, target: code, value: 201 }
+          - { type: contract, value: true }

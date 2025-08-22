@@ -1,0 +1,26 @@
+name: Users API (local)
+scenarios:
+  - name: Create user returns 201 and email matches
+    steps:
+      - request:
+          method: POST
+          url: http://localhost:8081/users
+          timeoutMs: 2000
+          headers:
+            Content-Type: application/json
+          body:
+            email: "qa+${uuid}@example.com"
+            name: "Test User"
+        expect:
+          - type: status
+            target: code
+            value: 201
+          - type: jsonPath
+            target: $.email
+            value: "qa+${uuid}@example.com"
+    teardown:
+      - name: cleanup
+        request:
+          method: POST
+          url: http://localhost:8081/cleanup
+          timeoutMs: 1000

@@ -1,0 +1,81 @@
+name: JSONPlaceholder — sea-qa Demo
+openapi: tests/examples/jsonplaceholder/openapi.json
+
+scenarios:
+  - name: List posts (GET /posts?userId=1)
+    tags: [stable, posts]
+    steps:
+      - request:
+          method: GET
+          url: ${BASE_URL}/posts?userId=1
+          headers:
+            Accept: application/json
+        expect:
+          - type: status
+            value: 200
+          - type: contract
+            value: true
+
+  - name: Get post 1 (GET /posts/1)
+    tags: [stable, posts]
+    steps:
+      - request:
+          method: GET
+          url: ${BASE_URL}/posts/1
+          headers:
+            Accept: application/json
+        expect:
+          - type: status
+            value: 200
+          - type: jsonPath
+            target: $.id
+            value: 1
+          - type: contract
+            value: true
+
+  - name: Create post (POST /posts)
+    tags: [stable, posts, create]
+    steps:
+      - request:
+          method: POST
+          url: ${BASE_URL}/posts
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+          body:
+            title: "sea-qa Test"
+            body: "Hello from sea-qa"
+            userId: 1
+        expect:
+          - type: status
+            value: 201
+          - type: contract
+            value: true
+
+  - name: List comments for post 1 (GET /comments?postId=1)
+    tags: [stable, comments]
+    steps:
+      - request:
+          method: GET
+          url: ${BASE_URL}/comments?postId=1
+          headers:
+            Accept: application/json
+        expect:
+          - type: status
+            value: 200
+          - type: contract
+            value: true
+
+  - name: Get user 1 (GET /users/1)
+    tags: [stable, users]
+    steps:
+      - request:
+          method: GET
+          url: ${BASE_URL}/users/1
+          headers:
+            Accept: application/json
+        expect:
+          - type: status
+            value: 200
+          - type: contract
+            value: true
