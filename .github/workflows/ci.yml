@@ -1,16 +1,44 @@
 name: CI
 on: [push, pull_request]
+
 jobs:
   go:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-go@v5
-        with: { go-version: '1.21.x' }
-      - run: go mod download
-      - run: go test ./...
-      - run: go build ./cmd/sea-qa
+        with:
+          go-version: '1.21.x'
+
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Download deps
+        run: go mod download
+
+      - name: Test
+        run: go test ./...
+
+      - name: Build apiqa
+        run: go build -o apiqa ./cmd/sea-qa
+
+      - name: Build apimock
+        run: go build -o apimock ./cmd/apimock
+
       - name: Smoke run (apimock)
-        run: ./apiqa --spec suite.yaml --env env/staging.json --out reports || true
-      - uses: actions/upload-artifact@v4
-        with: { name: reports, path: reports/ }
+        run: ./apimock --spec suite.yaml --env env/staging.json --out reports || true
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: reports/
